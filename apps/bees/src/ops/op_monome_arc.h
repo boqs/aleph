@@ -12,20 +12,15 @@ typedef struct op_marc_struct {
   op_monome_t monome;
   // focus toggle
   volatile io_t focus;
-  // loopback toggle
-  volatile io_t loop;
   // set ring number
   volatile io_t ring;
   // set update position
   volatile io_t pos;
-  // set update value
+  // input pointer array
   volatile io_t val;
   // input pointer array
-  volatile io_t* in_val[5];
-  op_out_t outs[3];
-  // internal
-  u8 mRing;
-  u8 vals[4];
+  volatile io_t* in_val[4];
+  op_out_t outs[2];
 } op_marc_t;
 
 // init

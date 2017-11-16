@@ -8,8 +8,8 @@
 //----- static variables
 
 //---- descriptor strings
-static const char* op_marc_instring =  "FOCUS\0  LOOP\0   RING\0   POS\0    VAL\0    ";
-static const char* op_marc_outstring = "NUM\0    DELTA\0  VAL\0    ";
+static const char* op_marc_instring =  "FOCUS\0  RING\0   POS\0    VAL\0    ";
+static const char* op_marc_outstring = "NUM\0    DELTA\0  ";
 static const char* op_marc_opstring =  "ARC";
 
 //-------------------------------------------------
@@ -19,7 +19,6 @@ static const char* op_marc_opstring =  "ARC";
 
 //// network inputs: 
 static void op_marc_in_focus(op_marc_t* grid, const io_t val);
-static void op_marc_in_loop(op_marc_t* grid, const io_t val);
 static void op_marc_in_ring(op_marc_t* grid, const io_t val);
 static void op_marc_in_pos(op_marc_t* grid, const io_t val);
 static void op_marc_in_val(op_marc_t* grid, const io_t val);
@@ -34,7 +33,6 @@ static void op_marc_handler(op_monome_t* op_monome, u32 data);
 // input func pointer array
 static op_in_fn op_marc_in_fn[5] = {
   (op_in_fn)&op_marc_in_focus,
-  (op_in_fn)&op_marc_in_loop,
   (op_in_fn)&op_marc_in_ring,
   (op_in_fn)&op_marc_in_pos,
   (op_in_fn)&op_marc_in_val,
@@ -62,8 +60,8 @@ void op_marc_init(void* mem) {
   op->super.type = eOpMonomeArc;
   op->super.flags |= (1 << eOpFlagMonomeRing);
 
-  op->super.numInputs = 5;
-  op->super.numOutputs = 3;
+  op->super.numInputs = 4;
+  op->super.numOutputs = 2;
 
   op->super.in_val = op->in_val;
   op->super.out = op->outs;
@@ -74,25 +72,17 @@ void op_marc_init(void* mem) {
 
   op->in_val[0] = &(op->focus);
   op->monome.focus = &(op->focus);
-  op->in_val[1] = &(op->loop);  
-  op->in_val[2] = &(op->ring);
-  op->in_val[3] = &(op->pos);
-  op->in_val[4] = &(op->val);
+  op->in_val[1] = &(op->ring);
+  op->in_val[2] = &(op->pos);
+  op->in_val[3] = &(op->val);
 
   op->outs[0] = -1;
   op->outs[1] = -1;
 
   op->focus = OP_ONE;
-  op->loop = 1;
   op->ring = 0;
   op->pos = 0;
   op->val = 0;
-
-
-  op->vals[0] = 0;
-  op->vals[1] = 0;
-  op->vals[2] = 0;
-  op->vals[3] = 0;
 
   if(!recallingScene) {
     net_monome_set_focus(&(op->monome), 1);
@@ -118,31 +108,43 @@ static void op_marc_in_focus(op_marc_t* op, const io_t v) {
   net_monome_set_focus( &(op->monome), op->focus > 0);
 }
 
-// set loopback flag
-static void op_marc_in_loop(op_marc_t* op, const io_t v) {
-  op->loop  = (v > 0) ? OP_ONE : 0;
-}
-
 // set ring number for next update
 static void op_marc_in_ring(op_marc_t* op, const io_t v) {
-  if(v<0) op->ring = 0;
-  else if(v>3) op->ring = 3;
-  else op->ring = (u8)v;
+  if(v<0) {
+    op->ring = 0;
+  }
+  else if (v>3) {
+    op->ring = 3;
+  }
+  else {
+    op->ring = (u8)v;
+  }
 }
 
 // set ring position for next update
 static void op_marc_in_pos(op_marc_t* op, const io_t v) {
-  if(v<0) op->pos = 0;
-  else if(v>63) op->pos = 63;
-  else op->pos = (u8)v;
+  if(v<0) {
+    op->pos = 0;
+  }
+  else if (v>63) {
+    op->pos = 63;
+  }
+  else {
+    op->pos = (u8)v;
+  }
 }
 
 // set value and perform update
 static void op_marc_in_val(op_marc_t* op, const io_t v) {
-  if(v<0) op->val = 0;
-  else if(v>15) op->val = 15;
-  else op->val = (u8)v;
-
+  if (v<0) {
+    op->val = 0;
+  }
+  else if (v>15) {
+    op->val = 15;
+  }
+  else {
+    op->val = (u8)v;
+  }
   monome_arc_led_set(op->ring, op->pos, op->val);
 }
 
@@ -150,45 +152,34 @@ static void op_marc_in_val(op_marc_t* op, const io_t v) {
 static void op_marc_handler(op_monome_t* op_monome, u32 data) {
   u8 n;
   s8 v;
-  s16 a;
   
   op_marc_t* op = (op_marc_t*)(op_monome->op);
-
   monome_ring_enc_parse_event_data(data, &n, &v);
-  
-  print_dbg("\r\n op_marc_handler received event; n: 0x");
-  print_dbg_hex(n);
-  print_dbg("; v: 0x");
-  print_dbg_hex(v);
-
   net_activate(op, 0, (io_t)n);
   net_activate(op, 1, (io_t)v);
-
-    if(op->loop) {
-    a = op->vals[n] + v;
-    if(a<0) a=0;
-    else if(a>255) a=255;
-
-    monome_arc_led_set(n, op->vals[n]/4, 0);
-    op->vals[n] = a;
-    monome_arc_led_set(n, op->vals[n]/4, 15);
-    net_activate(op, 2, (io_t)op->vals[n]);
-  }
 }
 
 
 // pickle / unpickle
 u8* op_marc_pickle(op_marc_t* marc, u8* dst) {
   dst = pickle_io(marc->focus, dst);
-  dst = pickle_io(marc->loop, dst);
+  int i;
+  for (i=0; i < MONOME_MAX_LED_BYTES; i++) {
+    *dst = marc->monome.opLedBuffer[i];
+    dst++;
+  }
   return dst;
 }
 
 const u8* op_marc_unpickle(op_marc_t* marc, const u8* src) {
   src = unpickle_io(src, (u32*)&(marc->focus));
-  src = unpickle_io(src, (u32*)&(marc->loop));
   if (marc->focus > 0) {
     net_monome_set_focus( &(marc->monome), 1);
+  }
+  int i;
+  for (i=0; i < MONOME_MAX_LED_BYTES; i++) {
+    marc->monome.opLedBuffer[i] = *src;
+    src++;
   }
   return src;
 }
