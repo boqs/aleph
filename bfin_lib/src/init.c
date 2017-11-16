@@ -129,14 +129,14 @@ void init_sport1(void) {
   //// frame sync required           : TFSR  = 1
   //// no companding                 : TDTYPE = 00
   //// MSB first                     : TLSBIT = 0  
-  *pSPORT1_TCR1 = ITCLK | ITFS | TFSR;
+  *pSPORT1_TCR1 = TCKFE | ITCLK | ITFS | TFSR;
  
   //// normal mode             : TSFSE = 0
   //// secondary side enabled : TXSE  = 1
   ///// 24-bit word length
-  //     *pSPORT1_TCR2 = 23 | TXSE ;
+      *pSPORT1_TCR2 = 23 | TXSE ;
   //// 25-bit cause DACs need an extra cycle to recover, ugggh
-  *pSPORT1_TCR2 = 24 | TXSE ;
+  /* *pSPORT1_TCR2 = 24 | TXSE ; */
   // tclk = sclk / ( 2 x (div + 1)
   /// DAC datasheet indicates we can go up to 50Mhz
   // here's 27 Mhz?

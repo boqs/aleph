@@ -41,7 +41,7 @@ void cv_update(u8 ch, fract32 val) {
   // shift from fract32
   buf |= (val >> 15 ) & 0xffff;
   // extra bit for weird FS timing kludge (need 25 clocks)
-  cvTxBuf = buf << 1;
+  /* cvTxBuf = buf << 1; */
 }
 
 
