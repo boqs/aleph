@@ -7,10 +7,10 @@
 
 
 #define SMALL_OP_SIZE 128
-#define MAX_SMALL_OPS 256
+#define MAX_SMALL_OPS 64
 
 #define BIG_OP_SIZE (1024 * 16)
-#define MAX_BIG_OPS 8
+#define MAX_BIG_OPS 2
 
 void initBigMemPool (void);
 u8* allocBigOp(void);
