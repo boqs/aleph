@@ -215,34 +215,47 @@ int _init_startup(void) {
 // top-level peripheral init
 static void init_avr32(void) {
     // fixme: test malloc for SDRAM paranoia
+  print_dbg("\r\ntesting malloc...");
     test_malloc();
+    print_dbg("\r\ntested malloc...");
 
     // disable all interrupts for now
     cpu_irq_disable();
+   print_dbg("\r\n init spi...");
 
     // initialize spi1: OLED, ADC, SD/MMC
     init_spi1();
     // initialize PDCA controller
+    print_dbg("\r\n init pcda..."); 
     init_local_pdca();
     // initialize blackfin resources
+    print_dbg("\r\n init bfin..."); 
     init_bfin_resources();
     // initialize application timer
+    print_dbg("\r\n init timer..."); 
     init_tc();
     // initialize other GPIO
+    print_dbg("\r\n init gpio..."); 
     init_gpio();
     // register interrupts
+    print_dbg("\r\n register interrupts...");
     register_interrupts();
     // initialize the OLED screen
+    print_dbg("\r\n init oled");
     init_oled();
     // init twi
+    print_dbg("\r\n init twi ");
     init_twi();
 
     // enable interrupts
+    print_dbg("\r\n enable interrupts ");
     cpu_irq_enable();
 
     // usb host controller
+    print_dbg("\r\n init usb ");
     init_usb_host();
     // initialize usb class drivers
+    print_dbg("\r\n init monome ");
     init_monome();
 
     print_dbg("\r\n ++++++++++++++++ avr32 init done ");
@@ -346,9 +359,13 @@ void check_events(void) {
 // !!!!!!!!!!!!!
 // main function
 int main(void) {
-    init_events();
+  print_dbg("\r\bbooted successfully");
+  init_events();
+    print_dbg("\r\ndone init-ing events");
     // set up avr32 hardware and peripherals
     init_avr32();
+    
+  print_dbg("\r\ndone init-ing avr32");
 
     // memory manager
     init_mem();

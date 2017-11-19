@@ -141,9 +141,12 @@ void test_malloc(void) {
             print_dbg("\r\nMalloc failed\r\n");
         }
     }
+    print_dbg("\r\nfinished memtest, freeing mem...\r\n");
     // II.4 Free the previously allocated buffers.
     for (i = 0; i < EXTSDRAM_EXAMPLE_NB_MALLOC; i++) {
+	print_dbg("\r\nfreeing chunk...\r\n");
         pBuf = au32StoreMallocPtr[i];
         if (NULL != pBuf) free(pBuf);
+	print_dbg("\r\nfreed chunk...\r\n");
     }
 }
