@@ -215,9 +215,9 @@ int _init_startup(void) {
 // top-level peripheral init
 static void init_avr32(void) {
     // fixme: test malloc for SDRAM paranoia
-  print_dbg("\r\ntesting malloc...");
-    test_malloc();
-    print_dbg("\r\ntested malloc...");
+  /* print_dbg("\r\ntesting malloc..."); */
+    /* test_malloc(); */
+    /* print_dbg("\r\ntested malloc..."); */
 
     // disable all interrupts for now
     cpu_irq_disable();
