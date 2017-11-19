@@ -13,8 +13,8 @@
 //  SRAM base address
 #define SRAM              ((void *)AVR32_EBI_CS1_ADDRESS)
 // SRAM size.
-/* #define SRAM_SIZE         (1 << smc_get_cs_size(1)) */
-#define SRAM_SIZE (1024 * 1024)
+#define SRAM_SIZE         (1 << smc_get_cs_size(1))
+/* #define SRAM_SIZE (1024 * 1024) */
 #define ALLOC_FAIL 0xffffffff
 
 // heap memory type

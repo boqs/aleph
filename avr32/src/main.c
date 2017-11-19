@@ -362,6 +362,7 @@ void check_events(void) {
 int main(void) {
   delay_ms(1000);
     // memory manager
+  _init_startup();
     init_mem();
     print_dbg("\r\n init_mem");
   print_dbg("\r\bbooted successfully");
