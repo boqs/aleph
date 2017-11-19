@@ -218,6 +218,7 @@ static void init_avr32(void) {
   /* print_dbg("\r\ntesting malloc..."); */
     /* test_malloc(); */
     /* print_dbg("\r\ntested malloc..."); */
+  sram_test(SRAM_SIZE, 0);
 
     // disable all interrupts for now
     cpu_irq_disable();
@@ -359,6 +360,10 @@ void check_events(void) {
 // !!!!!!!!!!!!!
 // main function
 int main(void) {
+  delay_ms(1000);
+    // memory manager
+    init_mem();
+    print_dbg("\r\n init_mem");
   print_dbg("\r\bbooted successfully");
   init_events();
     print_dbg("\r\ndone init-ing events");
@@ -367,9 +372,6 @@ int main(void) {
     
   print_dbg("\r\ndone init-ing avr32");
 
-    // memory manager
-    init_mem();
-    print_dbg("\r\n init_mem");
 
     // intialize the FAT filesystem
     fat_init();
