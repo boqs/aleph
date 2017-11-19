@@ -104,10 +104,8 @@ u32 module_get_num_params(void) {
 void module_process_frame(void) {
 
   // Update one of the CV outputs
-  if(filter_1p_sync(&(cvSlew[cvChan]))) { ;; } else {
-    cvVal[cvChan] = filter_1p_lo_next(&(cvSlew[cvChan]));
-    cv_update(cvChan, cvVal[cvChan]);
-  }
+  cvVal[cvChan] = filter_1p_lo_norm_next(&(cvSlew[cvChan]));
+  cv_update(cvChan, cvVal[cvChan]);
 
   // Queue up the next CV output for processing next audio frame
   if(++cvChan == 4) {
