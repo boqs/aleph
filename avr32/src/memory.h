@@ -17,6 +17,10 @@
 /* #define SRAM_SIZE (1024 * 1024) */
 #define ALLOC_FAIL 0xffffffff
 
+// compile-time flag switch between SDRAM malloc/free & SRAM
+// malloc/free spoofing
+#define USE_SDRAM
+
 // heap memory type
 typedef volatile u8* heap_t;
 

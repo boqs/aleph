@@ -216,10 +216,12 @@ int _init_startup(void) {
 static void init_avr32(void) {
     // fixme: test malloc for SDRAM paranoia
   /* print_dbg("\r\ntesting malloc..."); */
-    /* test_malloc(); */
     /* print_dbg("\r\ntested malloc..."); */
+#ifdef USE_SDRAM
+  test_malloc();
+#else
   sram_test(SRAM_SIZE, 0);
-
+#endif
     // disable all interrupts for now
     cpu_irq_disable();
    print_dbg("\r\n init spi...");
@@ -362,7 +364,7 @@ void check_events(void) {
 int main(void) {
   delay_ms(1000);
     // memory manager
-  _init_startup();
+  /* _init_startup(); */
     init_mem();
     print_dbg("\r\n init_mem");
   print_dbg("\r\bbooted successfully");
